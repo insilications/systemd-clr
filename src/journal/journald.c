@@ -53,8 +53,6 @@ int main(int argc, char *argv[]) {
                 goto finish;
 
         server_vacuum(&server, false);
-        server_flush_to_var(&server, true);
-        server_flush_dev_kmsg(&server);
 
         if (server.namespace)
                 log_debug("systemd-journald running as PID "PID_FMT" for namespace '%s'.", getpid_cached(), server.namespace);
@@ -65,6 +63,9 @@ int main(int argc, char *argv[]) {
                               "MESSAGE_ID=" SD_MESSAGE_JOURNAL_START_STR,
                               LOG_MESSAGE("Journal started"),
                               NULL);
+
+        server_flush_to_var(&server, true);
+        server_flush_dev_kmsg(&server);
 
         /* Make sure to send the usage message *after* flushing the
          * journal so entries from the runtime journals are ordered

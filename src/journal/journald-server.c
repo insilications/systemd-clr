@@ -2327,7 +2327,9 @@ int server_init(Server *s, const char *namespace) {
                 return r;
 
         /* By default, only read from /dev/kmsg if are the main namespace */
-        s->boot_kmsg = s->read_kmsg = !s->namespace;
+        s->read_kmsg = !s->namespace;
+        /* default in clearlinux is to not read kmsg from boot at all. Use BootKMsg=true in journald.conf instead if you need this */
+        s->boot_kmsg = false;
         s->storage = s->namespace ? STORAGE_PERSISTENT : STORAGE_AUTO;
 
         journal_reset_metrics(&s->system_storage.metrics);
