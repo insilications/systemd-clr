@@ -6127,7 +6127,7 @@ int unit_load_fragment(Unit *u) {
                 /* Try to open the file name. A symlink is OK, for example for linked files or masks. We
                  * expect that all symlinks within the lookup paths have been already resolved, but we don't
                  * verify this here. */
-                f = fopen(fragment, "re");
+                f = fopen(fragment, "rem");
                 if (!f)
                         return log_unit_notice_errno(u, errno, "Failed to open %s: %m", fragment);
 
