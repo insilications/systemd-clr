@@ -19,6 +19,8 @@ f /var/log/lastlog 0664 root utmp -
 {% endif %}
 
 d /var/cache 0755 - - -
+d /var/cache/locale 0755 - - -
+d /var/cache/ldconfig 0755 - - -
 
 d /var/lib 0755 - - -
 
