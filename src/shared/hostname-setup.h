@@ -23,3 +23,4 @@ int read_etc_hostname(const char *path, char **ret);
 
 void hostname_update_source_hint(const char *hostname, HostnameSource source);
 int hostname_setup(bool really);
+int set_first_hostname(void);

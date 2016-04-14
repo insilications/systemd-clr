@@ -2129,6 +2129,7 @@ static int initialize_runtime(
                         (void) hostname_setup(true);
                         /* Force transient machine-id on first boot. */
                         machine_id_setup(NULL, first_boot, arg_machine_id, NULL);
+                        set_first_hostname();
                         (void) loopback_setup();
                         bump_unix_max_dgram_qlen();
                         bump_file_max_and_nr_open();
