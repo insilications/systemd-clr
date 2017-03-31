@@ -760,7 +760,7 @@ static void client_stop(sd_dhcp_client *client, int error) {
  * each attempt with max of 64s, with -1 to +1 sec of random 'fuzz' added.
  * This assumes the first call will be using attempt 1. */
 static usec_t client_compute_request_timeout(usec_t now, uint64_t attempt) {
-        usec_t timeout = (UINT64_C(1) << MIN(attempt + 1, UINT64_C(6))) * USEC_PER_SEC;
+        usec_t timeout = ((UINT64_C(1) << MIN(attempt + 1, UINT64_C(6))) * USEC_PER_SEC) / 4;
 
         return usec_sub_signed(usec_add(now, timeout), RFC2131_RANDOM_FUZZ);
 }
