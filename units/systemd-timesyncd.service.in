@@ -51,7 +51,7 @@ StateDirectory=systemd/timesync
 SystemCallArchitectures=native
 SystemCallErrorNumber=EPERM
 SystemCallFilter=@system-service @clock
-Type=notify
+Type=simple
 User=systemd-timesync
 {{SERVICE_WATCHDOG}}
 
