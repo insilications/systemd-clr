@@ -14,7 +14,7 @@ DefaultDependencies=no
 RequiresMountsFor=/var/log/wtmp
 Conflicts=shutdown.target
 After=systemd-remount-fs.service systemd-tmpfiles-setup.service auditd.service
-Before=sysinit.target shutdown.target
+Before=shutdown.target
 
 [Service]
 Type=oneshot
