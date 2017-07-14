@@ -556,7 +556,7 @@ static int manager_receive_response(sd_event_source *source, int fd, uint32_t re
                   NTP_FIELD_VERSION(ntpmsg.field),
                   NTP_FIELD_MODE(ntpmsg.field),
                   ntpmsg.stratum,
-                  exp2(ntpmsg.precision), ntpmsg.precision,
+                  0.0, ntpmsg.precision,
                   root_distance,
                   ntpmsg.stratum == 1 ? ntpmsg.refid : "n/a",
                   origin - OFFSET_1900_1970,
