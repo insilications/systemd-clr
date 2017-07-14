@@ -665,6 +665,22 @@ static bool relevant_sysfs_subdir(const struct dirent *de) {
         return IN_SET(de->d_type, DT_DIR, DT_LNK);
 }
 
+static int acpi_status_disabled(char *sysfspath) {
+        FILE *file;
+        unsigned int i;
+        char newpath[4096];
+        char line[128];
+        sprintf(newpath, "%s/status", sysfspath);
+        file = fopen(newpath, "r");
+        if (!file)
+                return 0;
+        fclose(file);
+
+        if (strstr(sysfspath, "acpi") && strstr(sysfspath, "device:"))
+                return 1;
+        return 0;
+}
+
 static int enumerator_scan_dir_and_add_devices(
                 sd_device_enumerator *enumerator,
                 const char *basedir,
@@ -702,6 +718,9 @@ static int enumerator_scan_dir_and_add_devices(
                         continue;
 
                 (void) sprintf(syspath, "%s%s", path, de->d_name);
+
+                if (acpi_status_disabled(syspath))
+                        continue;
 
                 k = sd_device_new_from_syspath(&device, syspath);
                 if (k < 0) {
