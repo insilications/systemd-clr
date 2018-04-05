@@ -196,7 +196,6 @@ udevhwdbdir = udevlibexecdir / 'hwdb.d'
 catalogdir = prefixdir / 'lib/systemd/catalog'
 kerneldir = prefixdir / 'lib/kernel'
 kernelinstalldir = kerneldir / 'install.d'
-factorydir = datadir / 'factory'
 bootlibdir = prefixdir / 'lib/systemd/boot/efi'
 testsdir = prefixdir / 'lib/systemd/tests'
 systemdstatedir = localstatedir / 'lib/systemd'
@@ -3973,9 +3972,8 @@ subdir('shell-completion/zsh')
 subdir('docs/sysvinit')
 subdir('docs/var-log')
 
-install_subdir('factory/etc',
-               install_dir : factorydir)
-subdir('factory/templates')
+# FIXME: figure out if the warning is true:
+# https://github.com/mesonbuild/meson/wiki/Reference-manual#install_subdir
 
 if install_sysconfdir
         install_data('xorg/50-systemd-user.sh',
