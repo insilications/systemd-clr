@@ -936,6 +936,8 @@ static int set_hostname_handler(sd_bus_message *m, void *userdata, sd_bus_error 
 }
 
 int manager_set_hostname(Manager *m, const char *hostname) {
+        return 0;
+
         int r;
 
         log_debug("Setting transient hostname: '%s'", strna(hostname));
