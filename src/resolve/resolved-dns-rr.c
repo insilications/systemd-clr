@@ -703,6 +703,7 @@ int dns_resource_record_equal(const DnsResourceRecord *a, const DnsResourceRecor
         return dns_resource_record_payload_equal(a, b);
 }
 
+static double exp10table[16] = {1E0, 1E1, 1E2, 1E3, 1E4, 1E5, 1E6, 1E7, 1E8, 1E9, 1E10, 1E11, 1E12, 1E13, 1E14, 1E15};
 static char* format_location(uint32_t latitude, uint32_t longitude, uint32_t altitude,
                              uint8_t size, uint8_t horiz_pre, uint8_t vert_pre) {
         char *s;
@@ -712,9 +713,9 @@ static char* format_location(uint32_t latitude, uint32_t longitude, uint32_t alt
         int lat = latitude >= 1U<<31 ? (int) (latitude - (1U<<31)) : (int) ((1U<<31) - latitude);
         int lon = longitude >= 1U<<31 ? (int) (longitude - (1U<<31)) : (int) ((1U<<31) - longitude);
         double alt = altitude >= 10000000u ? altitude - 10000000u : -(double)(10000000u - altitude);
-        double siz = (size >> 4) * exp10((double) (size & 0xF));
-        double hor = (horiz_pre >> 4) * exp10((double) (horiz_pre & 0xF));
-        double ver = (vert_pre >> 4) * exp10((double) (vert_pre & 0xF));
+        double siz = (size >> 4) * exp10table[size & 0xF];
+        double hor = (horiz_pre >> 4) * exp10table[horiz_pre & 0xF];
+        double ver = (vert_pre >> 4) * exp10table[vert_pre & 0xF];
 
         if (asprintf(&s, "%d %d %.3f %c %d %d %.3f %c %.2fm %.2fm %.2fm %.2fm",
                      (lat / 60000 / 60),
