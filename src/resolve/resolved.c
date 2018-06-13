@@ -69,6 +69,8 @@ static int run(int argc, char *argv[]) {
 
         assert_se(sigprocmask_many(SIG_BLOCK, NULL, SIGTERM, SIGINT, SIGUSR1, SIGUSR2, SIGRTMIN+1, -1) >= 0);
 
+        notify_stop = notify_start(NOTIFY_READY, NOTIFY_STOPPING);
+
         r = manager_new(&m);
         if (r < 0)
                 return log_error_errno(r, "Could not create manager: %m");
@@ -86,8 +88,6 @@ static int run(int argc, char *argv[]) {
         r = capability_bounding_set_drop((UINT64_C(1) << CAP_NET_RAW), true);
         if (r < 0)
                 return log_error_errno(r, "Failed to drop remaining caps: %m");
-
-        notify_stop = notify_start(NOTIFY_READY, NOTIFY_STOPPING);
 
         r = sd_event_loop(m->event);
         if (r < 0)
