@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+if [ $# != 9 ]; then
+        echo "Expected 9 arguments, got $#"
+        exit -1
+fi
+
+E="$1"
+shift
+
+if [ -x /usr/bin/crashprobe ]; then
+        tee >(/usr/bin/crashprobe -p "$8" -E "$E" -s "$4") | /usr/lib/systemd/systemd-coredump "$@"
+else
+        /usr/lib/systemd/systemd-coredump "$@"
+fi
