@@ -27,6 +27,7 @@
 #include "strv.h"
 #include "time-util.h"
 #include "util.h"
+#include "missing_syscall.h"
 
 #define SNDBUF_SIZE (8*1024*1024)
 
@@ -398,13 +399,18 @@ _public_ int sd_is_socket_unix(int fd, int type, int listening, const char *path
         return 1;
 }
 
+static inline long mq_getattr_local(int fd, struct mq_attr *data)
+{
+        return syscall(__NR_mq_getsetattr, fd, NULL, data);
+}
+
 _public_ int sd_is_mq(int fd, const char *path) {
         struct mq_attr attr;
 
         /* Check that the fd is valid */
         assert_return(fcntl(fd, F_GETFD) >= 0, -errno);
 
-        if (mq_getattr(fd, &attr) < 0) {
+        if (mq_getattr_local(fd, &attr) < 0) {
                 if (errno == EBADF)
                         /* A non-mq fd (or an invalid one, but we ruled that out above) */
                         return 0;
