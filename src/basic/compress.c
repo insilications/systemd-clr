@@ -8,9 +8,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#if HAVE_XZ
-#include <lzma.h>
-#endif
+#undef HAVE_XZ
+#define HAVE_XZ 0
 
 #if HAVE_LZ4
 #include <lz4.h>

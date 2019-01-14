@@ -49,6 +49,9 @@
 #include "uid-alloc-range.h"
 #include "user-util.h"
 
+#undef HAVE_XZ
+#define HAVE_XZ 0
+
 /* The maximum size up to which we process coredumps. We use 1G on 32bit systems, and 32G on 64bit systems */
 #if __SIZEOF_POINTER__ == 4
 #define PROCESS_SIZE_MAX ((uint64_t) (1LLU*1024LLU*1024LLU*1024LLU))
