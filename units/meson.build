@@ -160,6 +160,8 @@ units = [
         ['var-lib-machines.mount',              'ENABLE_MACHINED',
          'remote-fs.target.wants/ machines.target.wants/'],
         ['systemd-oomd.socket',                 'ENABLE_OOMD'],
+        ['var-swapfile.swap',                   '',
+         'swap.target.wants/'],
 ]
 
 in_units = [
