@@ -94,6 +94,8 @@ int locale_read_data(Context *c, sd_bus_message *m) {
 int vconsole_read_data(Context *c, sd_bus_message *m) {
         struct stat st;
         usec_t t;
+        int r;
+        bool etc_conf = false;
 
         /* Do not try to re-read the file within single bus operation. */
         if (m) {
@@ -104,14 +106,19 @@ int vconsole_read_data(Context *c, sd_bus_message *m) {
                 c->vc_cache = sd_bus_message_ref(m);
         }
 
-        if (stat("/etc/vconsole.conf", &st) < 0) {
-                if (errno != ENOENT)
-                        return -errno;
+        r = stat("/etc/vconsole.conf", &st);
+        if (r >= 0) {
+                etc_conf = true;
+        } else if (errno == ENOENT)
+                r = stat("/usr/share/defaults/etc/vconsole.conf", &st);
 
+        if (r < 0 && errno == ENOENT) {
                 c->vc_mtime = USEC_INFINITY;
                 context_free_vconsole(c);
                 return 0;
         }
+        else if (r < 0)
+                return -errno;
 
         /* If mtime is not changed, then we do not need to re-read */
         t = timespec_load(&st.st_mtim);
@@ -121,7 +128,7 @@ int vconsole_read_data(Context *c, sd_bus_message *m) {
         c->vc_mtime = t;
         context_free_vconsole(c);
 
-        return parse_env_file(NULL, "/etc/vconsole.conf",
+        return parse_env_file(NULL, (etc_conf) ? "/etc/vconsole.conf" : "/usr/share/defaults/etc/vconsole.conf",
                               "KEYMAP",        &c->vc_keymap,
                               "KEYMAP_TOGGLE", &c->vc_keymap_toggle);
 }
@@ -132,6 +139,7 @@ int x11_read_data(Context *c, sd_bus_message *m) {
         struct stat st;
         usec_t t;
         int r;
+        bool etc_conf = false;
 
         /* Do not try to re-read the file within single bus operation. */
         if (m) {
@@ -142,14 +150,18 @@ int x11_read_data(Context *c, sd_bus_message *m) {
                 c->x11_cache = sd_bus_message_ref(m);
         }
 
-        if (stat("/etc/X11/xorg.conf.d/00-keyboard.conf", &st) < 0) {
-                if (errno != ENOENT)
-                        return -errno;
+        r = stat("/etc/X11/xorg.conf.d/00-keyboard.conf", &st);
+        if (r >= 0) {
+                etc_conf = true;
+        } else if (errno == ENOENT)
+                r = stat("/usr/share/defaults/etc/X11/xorg.conf.d/00-keyboard.conf", &st);
 
+        if (r < 0 && errno == ENOENT) {
                 c->x11_mtime = USEC_INFINITY;
                 context_free_x11(c);
                 return 0;
-        }
+        } else if (r < 0)
+                return -errno;
 
         /* If mtime is not changed, then we do not need to re-read */
         t = timespec_load(&st.st_mtim);
@@ -159,7 +171,7 @@ int x11_read_data(Context *c, sd_bus_message *m) {
         c->x11_mtime = t;
         context_free_x11(c);
 
-        f = fopen("/etc/X11/xorg.conf.d/00-keyboard.conf", "re");
+        f = fopen((etc_conf) ? "/etc/X11/xorg.conf.d/00-keyboard.conf" : "/usr/share/defaults/etc/X11/xorg.conf.d/00-keyboard.conf", "re");
         if (!f)
                 return -errno;
 

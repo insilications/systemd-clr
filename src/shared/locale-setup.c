@@ -21,7 +21,7 @@ void locale_context_clear(LocaleContext *c) {
 
 int locale_context_load(LocaleContext *c, LocaleLoadFlag flag) {
         int r;
-
+        bool etc_conf = false;
         assert(c);
 
         if (FLAGS_SET(flag, LOCALE_LOAD_PROC_CMDLINE)) {
@@ -53,6 +53,10 @@ int locale_context_load(LocaleContext *c, LocaleLoadFlag flag) {
                 usec_t t;
 
                 r = stat("/etc/locale.conf", &st);
+                if (r >= 0)
+                        etc_conf = true;
+                else if (errno == ENOENT)
+                        r = stat("/usr/share/defaults/etc/locale.conf", &st);
                 if (r < 0 && errno != ENOENT)
                         return log_debug_errno(errno, "Failed to stat /etc/locale.conf: %m");
 
@@ -65,7 +69,7 @@ int locale_context_load(LocaleContext *c, LocaleLoadFlag flag) {
                         locale_context_clear(c);
                         c->mtime = t;
 
-                        r = parse_env_file(NULL, "/etc/locale.conf",
+                        r = parse_env_file(NULL, (etc_conf) ? "/etc/locale.conf" : "/usr/share/defaults/etc/locale.conf",
                                            "LANG",              &c->locale[VARIABLE_LANG],
                                            "LANGUAGE",          &c->locale[VARIABLE_LANGUAGE],
                                            "LC_CTYPE",          &c->locale[VARIABLE_LC_CTYPE],
