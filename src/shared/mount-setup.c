@@ -110,6 +110,16 @@ static const MountPoint mount_table[] = {
 #endif
         { "bpf",         "/sys/fs/bpf",               "bpf",        "mode=700",                                MS_NOSUID|MS_NOEXEC|MS_NODEV,
           NULL,          MNT_NONE,                  },
+        { "hugetlbfs",   "/dev/hugepages",            "hugetlbfs",  NULL,                                      MS_NOSUID|MS_NOEXEC|MS_NODEV,
+          NULL,          MNT_NONE                   },
+        { "mqueue",      "/dev/mqueue",               "mqueue",     NULL,                                      MS_NOSUID|MS_NOEXEC|MS_NODEV,
+          NULL,          MNT_NONE                   },
+        { "fusectl",     "/sys/fs/fuse/connections",  "fusectl",    NULL,                                      MS_NOSUID|MS_NOEXEC|MS_NODEV,
+          NULL,          MNT_NONE                   },
+        { "configfs",    "/sys/kernel/config",        "configfs",   NULL,                                      MS_NOSUID|MS_NOEXEC|MS_NODEV,
+          NULL,          MNT_NONE                   },
+        { "debugfs",     "/sys/kernel/debug",         "debugfs",    NULL,                                      MS_NOSUID|MS_NOEXEC|MS_NODEV,
+          NULL,          MNT_NONE                   },
 };
 
 bool mount_point_is_api(const char *path) {
